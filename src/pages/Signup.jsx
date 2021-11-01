@@ -1,20 +1,22 @@
 import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
 
 import './auth.css';
-import logo from './logo.svg';
 
 function Signup() {
   const title = 'Signup';
 
+  const navigate = useNavigate();
+
   return (
     <>
       <Helmet>
-        <title>Authx: {title}</title>
+        <title>{title}</title>
       </Helmet>
       <main className="container-auth text-center">
         <form>
-          <img className="mb-2 auth-logo" src={logo} alt="React Logo" />
-          <h1 className="h3 mb-3 fw-normal">Please sign up</h1>
+          <i className="bi bi-file-lock-fill auth-icon my-4"/>
+          <p className="mb-3 fw-normal">Click <strong>Sign up</strong> button to sign up and log into the admin console.</p>
           <div className="form-floating">
             <input type="email"
                    className="form-control form-input-top"
@@ -41,7 +43,9 @@ function Signup() {
               <input type="checkbox" value="remember-me" /> Remember me
             </label>
           </div>
-          <button className="w-100 btn btn-lg btn-primary" type="button">Sign up</button>
+          <button className="w-100 btn btn-lg btn-primary"
+                  type="button"
+                  onClick={() => navigate('/console')}>Log in</button>
         </form>
       </main>
     </>

@@ -1,8 +1,8 @@
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 
-function Home() {
-  const title = 'Authx';
+function Console() {
+  const title = 'Console';
 
   const navigate = useNavigate();
 
@@ -21,7 +21,8 @@ function Home() {
             <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
               <button type="button"
                       className="btn btn-outline-secondary btn-lg px-4"
-                      onClick={() => navigate('/signup')}>
+                      onClick={() => navigate('/signup')}
+              >
                 Sign up
               </button>
               <button type="button"
@@ -37,4 +38,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Console;

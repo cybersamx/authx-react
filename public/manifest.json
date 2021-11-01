@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Authx",
+  "name": "OAuth2 service implemented in Go",
   "icons": [
     {
       "src": "favicon.ico",

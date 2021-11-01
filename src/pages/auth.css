@@ -41,23 +41,7 @@ body {
   border-top-right-radius: 0;
 }
 
-.auth-logo {
-  pointer-events: none;
-  width: 128px;
-  height: 128px;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .auth-logo {
-    animation: auth-logo-spin infinite 20s linear;
-  }
-}
-
-@keyframes auth-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.auth-icon {
+  color: #7713F7;
+  font-size: 4rem;
 }
