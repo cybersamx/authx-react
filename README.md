@@ -30,5 +30,5 @@ Authx admin console implemented in React.
 
 ## Reference
 
+* [React Router v6 Preview](https://reacttraining.com/blog/react-router-v6-pre/)
 * [Upgrade React Router v5 to v6](https://morioh.com/p/995f1244f33b)
-* [React Router v6 Reference](https://github.com/remix-run/react-router/blob/c13b66939ef48eacf7067f7aec4752777be8b17c/docs/api-reference.md)

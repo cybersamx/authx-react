@@ -1,29 +1,56 @@
-const tokenKey = 'authx.token';
-const registeredUsers = [
-  { id: 'uid:0', username: 'admin', password: 'qwerty' },
-  { id: 'uid:1', username: 'lee', password: '123456' },
-];
+const keyUser = 'authx.user';
+const registeredUsers = new Map([
+  ['admin', {
+    id: 'uid:0', username: 'admin', email: 'admin@example.com', password: 'qwerty', firstname: 'App', lastname: 'Admin',
+  }],
+  ['lee', {
+    id: 'uid:973236115', username: 'lee', email: 'lee@acme.com', password: '12345', firstname: 'Steve', lastname: 'Lee',
+  }],
+]);
+
+function newUID() {
+  const epoch = Math.floor(new Date() / 1000).toString();
+  return `uid:${epoch}`;
+}
 
 function newToken() {
   return (Math.random() * 1000000000).toString(16);
 }
 
-function getToken() {
-  return localStorage.getItem(tokenKey);
+function setSession(user, token) {
+  // Remove the password property.
+  const { password, ...rest } = user;
+
+  // Merge token to the final object.
+  const merged = {
+    ...rest,
+    token,
+  };
+
+  localStorage.setItem(keyUser, JSON.stringify(merged));
+}
+
+function getSession() {
+  const user = localStorage.getItem(keyUser);
+
+  return JSON.parse(user);
 }
 
 function isAuth() {
-  return !!getToken();
+  return !!getSession();
 }
 
 async function login(username, password) {
   return new Promise((resolve, reject) => {
+    // Using setTimeout to simulate network latency.
     setTimeout(() => {
-      const found = registeredUsers.find((user) => user.username === username && user.password === password);
+      // const found = registeredUsers.find((user) => user.username === username && user.password === password);
+
+      const found = registeredUsers.get(username);
 
       if (found) {
         const token = newToken();
-        localStorage.setItem(tokenKey, token);
+        setSession(found, token);
         return resolve(token);
       }
 
@@ -34,13 +61,40 @@ async function login(username, password) {
 
 async function logout() {
   return new Promise((resolve) => {
+    // Using setTimeout to simulate network latency.
     setTimeout(() => {
-      localStorage.removeItem(tokenKey);
+      localStorage.removeItem(keyUser);
       resolve();
     }, 1000);
   });
 }
 
+async function addUser(user) {
+  return new Promise((resolve) => {
+    // Using setTimeout to simulate network latency.
+    const id = newUID();
+    setTimeout(() => {
+      const merged = {
+        ...user,
+        id,
+      };
+
+      registeredUsers.set(user.username, merged);
+      resolve(merged);
+    }, 1000);
+  });
+}
+
+async function getUsers() {
+  return new Promise((resolve) => {
+    // Using setTimeout to simulate network latency.
+    setTimeout(() => {
+      const users = Array.from(registeredUsers.values());
+      resolve(users);
+    }, 1000);
+  });
+}
+
 export {
-  getToken, isAuth, login, logout,
+  getSession, isAuth, login, logout, addUser, getUsers,
 };
