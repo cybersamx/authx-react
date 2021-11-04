@@ -1,12 +1,12 @@
+import { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
-  Button, FormControl, FormLabel, InputGroup, Spinner,
+  Button, Col, Form, FormControl, FormLabel, Row, Spinner,
 } from 'react-bootstrap';
 
 import useAuth from '../hooks/useAuth';
-import useForm from '../hooks/useForm';
 
 import './login.css';
 
@@ -23,11 +23,12 @@ function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { search } = useLocation();
+  const {
+    register, handleSubmit, formState: { errors },
+  } = useForm();
 
-  const handleLogin = async (e, data) => {
+  const handleLogin = async (data) => {
     try {
-      // No action taken for remember me. Just keep it simple.
-
       setIsLoading(true);
       const token = await login(data.username, data.password);
       // eslint-disable-next-line no-console
@@ -41,81 +42,54 @@ function Login() {
     }
   };
 
-  const validators = {
-    username: {
-      required: {
-        value: true,
-        message: 'username is required',
-      },
-    },
-    password: {
-      required: {
-        value: true,
-        message: 'password is required',
-      },
-    },
-  };
-
-  // Using a custom hook to show how we can build out our own hook.
-  const {
-    data, handleChange, handleSubmit, errors,
-  } = useForm({
-    onSubmit: handleLogin,
-    validators,
-  });
-
   return (
     <>
       <Helmet>
         <title>{title}</title>
       </Helmet>
       <main className="container-auth text-center">
-        <form>
+        <Form noValidate>
           <i className="bi bi-file-lock-fill auth-icon my-4"/>
           <p className="mb-3 fw-normal">
             Click <strong>Log in</strong> button to log into the admin console.
             Use <strong>admin</strong>:<strong>qwerty</strong> to log in.
           </p>
-          <InputGroup className="form-floating">
+          <Form.Group className="form-floating" controlId="inputUsername">
             <FormControl type="text"
                          className="form-control form-input-top"
-                         id="inputUsername"
+                         isInvalid={errors.username}
                          placeholder="Username"
-                         isInvalid={errors?.username}
-                         onChange={handleChange('username')}
+                         {...register('username', { required: true })}
             />
-            <FormLabel htmlFor="inputUsername">Username</FormLabel>
-          </InputGroup>
-          <InputGroup className="form-floating">
+            <FormLabel>Username</FormLabel>
+          </Form.Group>
+          <Form.Group className="form-floating" controlId="inputPassword">
             <FormControl type="password"
                          className="form-control form-input-bottom"
-                         id="inputPassword"
+                         isInvalid={errors.password}
                          placeholder="Password"
-                         isInvalid={errors?.password}
-                         onChange={handleChange('password')}
+                         {...register('password', { required: true })}
             />
-            <FormLabel htmlFor="inputPassword">Password</FormLabel>
-          </InputGroup>
-          {Object.keys(errors).map((key) => <div className="text-danger" key={key}>{errors[key]}</div>)}
-          <div className="checkbox mb-3 my-3">
-            <label>
-              <input type="checkbox"
-                     value="isRemember"
-                     checked={data.isRemember}
-                     onChange={handleChange('isRemember')}
-              />
-              Remember me
-            </label>
+            <FormLabel>Password</FormLabel>
+          </Form.Group>
+          <div>
+            <div className="text-danger">{errors.username && 'Username is required'}</div>
+            <div className="text-danger">{errors.password && 'Password is required'}</div>
           </div>
+          <Form.Group as={Row} className="my-3" controlId="isRemember">
+            <Col sm={{ span: 8, offset: 3 }} className="text-md-start">
+              <Form.Check label="Remember me" {...register('isRemember')} />
+            </Col>
+          </Form.Group>
           <Button className="w-100 btn btn-lg btn-primary"
                   type="button"
                   disabled={isLoading}
-                  onClick={handleSubmit}
+                  onClick={handleSubmit(handleLogin)}
           >
             <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" hidden={!isLoading} />
             <span className="px-2">Log in</span>
           </Button>
-        </form>
+        </Form>
       </main>
     </>
   );
