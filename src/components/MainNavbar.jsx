@@ -7,8 +7,6 @@ function MainNavbar() {
   const items = [
     { path: '/', title: 'Home' },
     { path: '/login', title: 'Login' },
-    { path: '/logout', title: 'Logout' },
-    { path: '/signup', title: 'Signup' },
   ];
 
   return (

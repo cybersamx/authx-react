@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import {
   Button, Col, Form, FormControl, FormLabel, Row, Spinner,
 } from 'react-bootstrap';
 
+import StatusAlert from '../components/StatusAlert';
 import useAuth from '../hooks/useAuth';
 
-import './login.css';
+import './auth.css';
 
 function redirectPath(search) {
   const match = search.match(/redirect=(.*)/);
@@ -27,6 +28,12 @@ function Login() {
     register, handleSubmit, formState: { errors },
   } = useForm();
 
+  const alertOpts = useRef({ isShow: false, message: '' });
+
+  const handleDismiss = () => {
+    alertOpts.current.isShow = false;
+  };
+
   const handleLogin = async (data) => {
     try {
       setIsLoading(true);
@@ -36,9 +43,11 @@ function Login() {
       setIsLoading(false);
       navigate(redirectPath(search));
     } catch (err) {
+      // Need to useRef to avoid cyclic reference of the show state in StatusAlert but we now must set alertOps
+      // before a set state call so that StatusAlert can render.
+      // TODO: Figure a more elegant solution for auto-dismissal alert.
+      alertOpts.current = { isShow: true, message: err.message };
       setIsLoading(false);
-      // eslint-disable-next-line no-alert
-      alert(`login failed: ${err}`);
     }
   };
 
@@ -76,11 +85,15 @@ function Login() {
             <div className="text-danger">{errors.username && 'Username is required'}</div>
             <div className="text-danger">{errors.password && 'Password is required'}</div>
           </div>
-          <Form.Group as={Row} className="my-3" controlId="isRemember">
+          <Form.Group as={Row} className="my-2" controlId="isRemember">
             <Col sm={{ span: 8, offset: 3 }} className="text-md-start">
               <Form.Check label="Remember me" {...register('isRemember')} />
             </Col>
           </Form.Group>
+          <div className="row mb-3">
+            <div className="col-6"><Link to="/forgot">Forgot password</Link></div>
+            <div className="col-6"><Link to="/signup">New account</Link></div>
+          </div>
           <Button className="w-100 btn btn-lg btn-primary"
                   type="button"
                   disabled={isLoading}
@@ -91,6 +104,11 @@ function Login() {
           </Button>
         </Form>
       </main>
+      <StatusAlert show={alertOpts.current.isShow}
+                   variant="failure"
+                   message={alertOpts.current.message}
+                   onDismiss={handleDismiss}
+      />
     </>
   );
 }

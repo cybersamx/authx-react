@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -6,13 +6,11 @@ import {
   Col, Button, Form, FormControl, InputGroup, FormLabel, Spinner,
 } from 'react-bootstrap';
 
+import StatusAlert from '../components/StatusAlert';
+import { emailPattern, namePattern } from '../common/constants';
 import useAuth from '../hooks/useAuth';
 
 import './signup.css';
-
-// eslint-disable-next-line max-len
-const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const namePattern = /^[A-Za-z-]*$/;
 
 function Signup() {
   const title = 'Signup';
@@ -24,6 +22,12 @@ function Signup() {
     register, handleSubmit, formState: { errors },
   } = useForm();
 
+  const alertOpts = useRef({ isShow: false, message: '' });
+
+  const handleDismiss = () => {
+    alertOpts.current.isShow = false;
+  };
+
   const handleSignup = async (data) => {
     try {
       setIsLoading(true);
@@ -33,9 +37,11 @@ function Signup() {
       setIsLoading(false);
       navigate('/login');
     } catch (err) {
+      // Need to useRef to avoid cyclic reference of the show state in StatusAlert but we now must set alertOps
+      // before a set state call so that StatusAlert can render.
+      // TODO: Figure a more elegant solution for auto-dismissal alert.
+      alertOpts.current = { isShow: true, message: err.message };
       setIsLoading(false);
-      // eslint-disable-next-line no-alert
-      alert(`signup failed: ${err}`);
     }
   };
 
@@ -142,6 +148,11 @@ function Signup() {
           </Button>
         </Form>
       </main>
+      <StatusAlert show={alertOpts.current.isShow}
+                   variant="failure"
+                   message={alertOpts.current.message}
+                   onDismiss={handleDismiss}
+      />
     </>
   );
 }

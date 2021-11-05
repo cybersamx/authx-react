@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 
 function Home() {
-  const title = 'React Bootstrap Template';
+  const title = 'Authx';
 
   const navigate = useNavigate();
 
@@ -16,7 +16,7 @@ function Home() {
           <h1 className="display-5 fw-bold">{title}</h1>
           <div className="col-lg-6 mx-auto">
             <p className="lead mb-4">
-              A simple, clean starter web app project with React and Bootstrap 5.
+              OAuth2 service implemented in Go.
             </p>
             <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
               <button type="button"
