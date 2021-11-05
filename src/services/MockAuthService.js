@@ -1,16 +1,40 @@
+import { name, internet, random } from 'faker';
+
+const delay = 1000;
 const keyUser = 'authx.user';
 const registeredUsers = new Map([
   ['admin', {
-    id: 'uid:0', username: 'admin', email: 'admin@example.com', password: 'qwerty', firstname: 'App', lastname: 'Admin',
+    id: '007', username: 'admin', email: 'admin@example.com', password: 'qwerty', firstname: 'App', lastname: 'Admin',
   }],
   ['lee', {
-    id: 'uid:973236115', username: 'lee', email: 'lee@acme.com', password: '12345', firstname: 'Steve', lastname: 'Lee',
+    id: 'abc123', username: 'lee', email: 'lee@acme.com', password: 'qwerty', firstname: 'Steve', lastname: 'Lee',
   }],
 ]);
 
+const apps = new Map([
+  ['94274fj34', { id: '94274fj34', secret: '324u349ch', callback: 'http://localhost:3000/callback' }],
+  ['we4hf7325', { id: 'we4hf7325', secret: '3847fj345', callback: 'http://localhost:3000/callback' }],
+  ['u832fy34d', { id: 'u832fy34d', secret: 'f3jfvcsr0', callback: 'http://localhost:3000/callback' }],
+  ['348fj23nd', { id: '348fj23nd', secret: 'sd9324rfv', callback: 'http://localhost:3000/callback' }],
+  ['2348fnq23', { id: '2348fnq23', secret: '23458fj23', callback: 'http://localhost:3000/callback' }],
+]);
+
+// eslint-disable-next-line no-plusplus
+for (let i = 0; i < 5; i++) {
+  const user = {
+    id: newUID(),
+    username: internet.userName(),
+    email: internet.email(),
+    password: 'qwerty',
+    firstname: name.firstName(),
+    lastname: name.lastName(),
+  };
+
+  registeredUsers.set(user.username, user);
+}
+
 function newUID() {
-  const epoch = Math.floor(new Date() / 1000).toString();
-  return `uid:${epoch}`;
+  return random.alphaNumeric(6);
 }
 
 function newToken() {
@@ -42,7 +66,6 @@ function isAuth() {
 
 async function login(username, password) {
   return new Promise((resolve, reject) => {
-    // Using setTimeout to simulate network latency.
     setTimeout(() => {
       const found = registeredUsers.get(username);
       if (!found) {
@@ -66,22 +89,20 @@ async function logout() {
     setTimeout(() => {
       localStorage.removeItem(keyUser);
       resolve();
-    }, 1000);
+    }, delay);
   });
 }
 
 async function sendPasswordReset() {
   return new Promise((resolve) => {
-    // Using setTimeout to simulate network latency.
     setTimeout(() => {
       resolve();
-    }, 1000);
+    }, delay);
   });
 }
 
 async function addUser(user) {
-  return new Promise((resolve) => {
-    // Using setTimeout to simulate network latency.
+  return new Promise((resolve, reject) => {
     const id = newUID();
     setTimeout(() => {
       const merged = {
@@ -89,24 +110,40 @@ async function addUser(user) {
         id,
       };
 
+      if (registeredUsers.has(user.username)) {
+        return reject(new Error(`${user.username} exists`));
+      }
+
       registeredUsers.set(user.username, merged);
-      resolve(merged);
-    }, 1000);
+      return resolve(merged);
+    }, delay);
   });
 }
 
 async function getUsers() {
   return new Promise((resolve) => {
-    // Using setTimeout to simulate network latency.
     setTimeout(() => {
-      const users = Array.from(registeredUsers.values());
+      const users = Array.from(registeredUsers.values(), (key) => {
+        // Remove the password property.
+        const { password, ...rest } = key;
+        return { ...rest };
+      });
+
       resolve(users);
-    }, 1000);
+    }, delay);
+  });
+}
+
+async function getApps() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(Array.from(apps.values()));
+    }, delay);
   });
 }
 
 // The useAuth hook is a wrapper to this service, make sure exported functions are also reflected
 // in the useAuth hook.
 export {
-  getSession, isAuth, login, logout, sendPasswordReset, addUser, getUsers,
+  getSession, isAuth, login, logout, sendPasswordReset, addUser, getUsers, getApps,
 };

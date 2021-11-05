@@ -13,7 +13,7 @@ function StatusAlert({
   message,
   variant = 'success',
   show = false,
-  delay = 3000,
+  delay = 4000,
   onDismiss,
 }) {
   const [isShow, setIsShow] = useState(show);

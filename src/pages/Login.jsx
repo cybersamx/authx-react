@@ -39,7 +39,7 @@ function Login() {
       setIsLoading(true);
       const token = await login(data.username, data.password);
       // eslint-disable-next-line no-console
-      console.log(`login successful, token: ${token}`);
+      console.log('login successful, token:', token);
       setIsLoading(false);
       navigate(redirectPath(search));
     } catch (err) {

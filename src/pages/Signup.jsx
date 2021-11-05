@@ -31,9 +31,11 @@ function Signup() {
   const handleSignup = async (data) => {
     try {
       setIsLoading(true);
+
       const user = await addUser(data);
       // eslint-disable-next-line no-console
-      console.log(`signup successful, user: ${user}`);
+      console.log('signup successful, user:', user);
+
       setIsLoading(false);
       navigate('/login');
     } catch (err) {
@@ -59,7 +61,12 @@ function Signup() {
             <FormControl type="text"
                          isInvalid={errors.firstname}
                          placeholder="First Name"
-                         {...register('firstname', { required: true })}
+                         {
+                           ...register('firstname', {
+                             required: true,
+                             pattern: namePattern,
+                           })
+                         }
             />
             <Form.Control.Feedback type="invalid">First name is required</Form.Control.Feedback>
           </Form.Group>
