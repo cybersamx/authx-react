@@ -46,9 +46,8 @@ function Apps() {
           <h1 className="h2">{title}</h1>
           <div className="btn-toolbar mb-2 mb-md-0">
             <div className="btn-group me-2">
-              <button type="button" className="btn btn-sm btn-outline-secondary">Create
-              </button>
-              <button type="button" className="btn btn-sm btn-outline-secondary">Remove</button>
+              <button type="button" className="btn btn-sm btn-outline-secondary">Delete</button>
+              <button type="button" className="btn btn-sm btn-outline-secondary">Create</button>
             </div>
           </div>
         </div>

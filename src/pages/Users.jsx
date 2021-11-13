@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Form } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
 
 import Table from '../components/Table';
@@ -14,13 +15,16 @@ const columns = [
   { Header: 'Lastname', accessor: 'lastname' },
 ];
 
-const addHeader = () => <th colSpan="1" role="columnheader">Avatar</th>;
+const appendHeaders = () => <th>Avatar</th>;
 
-const addCell = (row) => (
+const appendCells = (row) => (
   <td role="cell">
     <Jdenticon name={row.cells[1].value} height="32px" width="32px" />
   </td>
 );
+
+// Return an array of booleans to represent the state of the delete checkbox.
+const getChecks = (data) => data.map(() => false);
 
 function Users() {
   const title = 'Users';
@@ -28,6 +32,7 @@ function Users() {
   const { getUsers } = useAuth();
   const [users, setUsers] = useState();
   const [isShow, setIsShow] = useState(false);
+  const [checks, setChecks] = useState();
 
   // TODO: Need an easier way to load the table.
   useEffect(() => {
@@ -38,6 +43,7 @@ function Users() {
         const allusers = await getUsers();
         if (isMounted) {
           setUsers(allusers);
+          setChecks(getChecks(allusers));
         }
       } catch (err) {
         // eslint-disable-next-line no-alert
@@ -60,6 +66,16 @@ function Users() {
 
     const allusers = await getUsers();
     setUsers(allusers);
+    setChecks(getChecks(allusers));
+  };
+
+  const handleCheck = (i) => {
+    checks[i] = !checks[i];
+    setChecks(checks);
+  };
+
+  const handleDelete = () => {
+    console.log(checks);
   };
 
   const handleCancel = () => {
@@ -79,13 +95,18 @@ function Users() {
             <button type="button" className="btn btn-sm btn-outline-secondary me-3" onClick={handleShow}>Create
             </button>
             <div className="btn-group me-2">
-              <button type="button" className="btn btn-sm btn-outline-secondary">Edit
-              </button>
-              <button type="button" className="btn btn-sm btn-outline-secondary">Remove</button>
+              <button type="button" className="btn btn-sm btn-outline-secondary" onClick={handleDelete}>Delete</button>
+              <button type="button" className="btn btn-sm btn-outline-secondary">Edit</button>
             </div>
           </div>
         </div>
-        <Table columns={columns} data={users} addHeader={addHeader} addCell={addCell} />
+        <Table
+          columns={columns}
+          data={users}
+          appendHeaders={appendHeaders}
+          appendCells={appendCells}
+          onCheck={handleCheck}
+        />
       </div>
       <CreateUserDialog show={isShow} onCreate={handleCreate} onCancel={handleCancel} />
     </>
